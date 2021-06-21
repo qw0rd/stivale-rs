@@ -4,13 +4,67 @@
 //! documentation for helper functions and methods.
 //!
 //! For detailed documentation, Visit the official [docs](https://github.com/stivale/stivale/blob/master/STIVALE2.md)
+//!
+//!
+//!If you want a full working example, check the osdev's Stivale bare bones example.
+//!Everything will work exactly the same way.
+//!
+//!# Example
+//!```
+//! use stivale_rs::v2::{
+//!    Stivale2Header, Stivale2HeaderTagFrameBuffer, Stivale2HeaderTagTerminal, Stivale2Struct,
+//!    Stivale2StructTagTerminal, STIVALE2_HEADER_TAG_FRAMEBUFFER_ID, STIVALE2_HEADER_TAG_TERMINAL_ID,
+//!    STIVALE2_STRUCT_TAG_TERMINAL_ID,
+//!   };
+//!
+//! static STACK: [u8; 4096] = [0; 4096];
+//! static _term: Stivale2HeaderTagTerminal = Stivale2HeaderTagTerminal {
+//!    identifier: STIVALE2_HEADER_TAG_TERMINAL_ID,
+//!    next: core::ptr::null(),
+//!    flags: 0,
+//!   };
+//!
+//! #[no_mangle]
+//! extern "C" fn _start(info: *const Stivale2Struct) {
+//!    let info = unsafe { &*info };
+//!    let _t = info.get_tag(STIVALE2_STRUCT_TAG_TERMINAL_ID);
+//!
+//!    if _t.is_null() {
+//!         unsafe {
+//!             loop {
+//!             asm!("hlt");
+//!             }
+//!         }
+//!    }
+//!    let term = _t as *const Stivale2StructTagTerminal;
+//!    let term = unsafe { &*term };
+//!
+//!    let print = term.get_term_func();
+//!
+//!    let brand = core::str::from_utf8(&info.bootloader_brand).unwrap();
+//!    let version = core::str::from_utf8(&info.bootloader_version).unwrap();
+//!
+//!    print(brand);
+//!    print("\n");
+//!    print(version);
+//!
+//!     unsafe {
+//!        loop {
+//!            asm!("mov rax, 0xAA");
+//!            asm!("hlt");
+//!        }
+//!    }
+//! }
+//!
+//!
+//! ````
 
 /// The kernel executable shall have a section .stivale2hdr which will contain the header that the
 /// bootloader will parse. The following header should be initalized as static and should be linked
 /// as section `.stivale2hdr`
 #[repr(C, packed)]
 pub struct Stivale2Header {
-    pub entry_point: u64,
+    pub entry_point: *const (),
 
     /// The stack pointer should be cast to *const ().
     /// # Example
@@ -43,14 +97,14 @@ impl Stivale2Header {
     ///
     /// ```
     pub const fn new<const SIZE: usize>(
-        entry_point: u64,
+        entry_point: *const (),
         stack: &[u8; SIZE],
         flags: u64,
         tags: *const (),
     ) -> Self {
         Stivale2Header {
             entry_point,
-            stack: &stack[4095] as *const u8 as *const (),
+            stack: &stack[SIZE - 1] as *const u8 as *const (),
             flags,
             tags,
         }
