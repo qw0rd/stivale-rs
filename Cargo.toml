@@ -1,6 +1,6 @@
 [package]
 name = "stivale_rs"
-version = "0.1.5"
+version = "0.1.7"
 edition = "2018"
 license = "MIT"
 authors = ["David John <overflowedheap@gmail.com>"]
@@ -9,7 +9,7 @@ description = "Rust bindings for the stivale boot protocol."
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["v1"]
+default = ["v2"]
 v1 = []
 v2 = []
 
