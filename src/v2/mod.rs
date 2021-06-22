@@ -170,6 +170,22 @@ impl Stivale2Struct {
 
         Some(fb)
     }
+
+    /// Get a tag using id as type T.
+    ///
+    /// **Warning**: This will definitely result in a crash if pass in the wrong type. Please make
+    /// sure you use the real type that is attributed to the id.
+    pub fn _get<'a, T>(&self, id: u64) -> Option<&'a T> {
+        let tag = self.get_tag(id);
+
+        match tag {
+            Some(t) => {
+                let tag_ref = t as *const T;
+                Some(unsafe { &*tag_ref })
+            }
+            None => None,
+        }
+    }
 }
 
 pub const STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID: u64 = 0x506461d2950408fa;
