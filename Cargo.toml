@@ -1,6 +1,6 @@
 [package]
 name = "stivale_rs"
-version = "0.1.9"
+version = "0.2.0"
 edition = "2018"
 license = "MIT"
 authors = ["David John <overflowedheap@gmail.com>"]

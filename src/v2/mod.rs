@@ -123,25 +123,72 @@ impl Stivale2Struct {
     ///    }
     ///}
     /// ```
-    pub fn get_tag(&self, id: u64) -> *const () {
+    pub fn get_tag(&self, id: u64) -> Option<*const ()> {
         let mut current = self.tags as *const ();
 
         loop {
             // If the linked list is null or the id is not found in the list.
             if current.is_null() {
-                return core::ptr::null();
+                return None;
             }
 
             let _c = current as *const Stivale2Tag;
 
             unsafe {
                 if (*_c).identifier == id {
-                    return current;
+                    return Some(current);
                 }
                 current = (*_c).next as *const ();
             }
         }
     }
+
+    /// Get a immutable reference to terminal info passed on by bootloader.
+    pub fn get_terminal<'a>(&self) -> Option<&'a Stivale2StructTagTerminal> {
+        let term = match self.get_tag(STIVALE2_STRUCT_TAG_TERMINAL_ID) {
+            Some(term) => term,
+            None => {
+                return None;
+            }
+        };
+
+        let term = term as *const Stivale2StructTagTerminal;
+        let term = unsafe { &*term };
+        Some(term)
+    }
+
+    /// Get framebuffer info.
+    pub fn get_framebuffer<'a>(&self) -> Option<&'a Stivale2StructTagFramebuffer> {
+        let fb = match self.get_tag(STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID) {
+            Some(fb) => fb,
+            None => return None,
+        };
+
+        let fb = fb as *const Stivale2StructTagFramebuffer;
+        let fb = unsafe { &*fb };
+
+        Some(fb)
+    }
+}
+
+pub const STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID: u64 = 0x506461d2950408fa;
+
+#[repr(C, packed)]
+pub struct Stivale2StructTagFramebuffer {
+    pub identifier: u64,
+    pub next: u64,
+    pub framebuffer_addr: u64,
+    pub framebuffer_width: u16,
+    pub framebuffer_height: u16,
+    pub framebuffer_pitch: u16,
+    pub framebuffer_bpp: u16,
+    pub memory_model: u8,
+    pub red_mask_size: u8,
+    pub red_mask_shift: u8,
+    pub green_mask_size: u8,
+    pub green_mask_shift: u8,
+    pub blue_mask_size: u8,
+    pub blue_mask_shift: u8,
 }
 
 pub const STIVALE2_STRUCT_TAG_TERMINAL_ID: u64 = 0xc2b3f4c3233b0974;
