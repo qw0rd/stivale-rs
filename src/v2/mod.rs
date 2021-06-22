@@ -170,3 +170,71 @@ impl Stivale2StructTagTerminal {
         }
     }
 }
+
+/// This tag reports to the kernel the command line string that was passed to it by the bootloader.
+#[repr(C, packed)]
+pub struct Stivale2StructTagCmdline {
+    pub identifier: u64,
+    pub next: u64,
+    pub cmdline: u64,
+}
+
+#[repr(C, packed)]
+pub struct Stivale2StructTagMemmap {
+    pub identifier: u64,
+    pub next: u64,
+    pub entries: u64,
+    pub memmap: *const Stivale2MMapEntry,
+}
+
+#[repr(C, packed)]
+pub struct Stivale2MMapEntry {
+    pub base: u64,
+    pub length: u64,
+    pub r#type: u32,
+    pub unsed: u32,
+}
+
+pub enum Stivale2MMapType {
+    Usable = 1,
+    Reserved,
+    ACPIReclaimable,
+    ACPINvs,
+    BadMemory,
+    BootloaderReclaimable = 0x1000,
+    KernelAndModules = 0x1001,
+    Framebuffer = 0x1002,
+}
+
+/// This tag reports to the kernel the current UNIX epoch, as per RTC.
+#[repr(C, packed)]
+pub struct Stivale2StructTagEpoch {
+    pub identifier: u64,
+    pub next: u64,
+    pub epoch: u64,
+}
+
+/// This tag reports to the kernel info about the firmware.
+#[repr(C, packed)]
+pub struct Stivale2StructTagFirmware {
+    pub identifier: u64,
+    pub next: u64,
+    pub flags: u64,
+}
+
+/// This tag provides the kernel with a pointer to the EFI system table if available.
+#[repr(C, packed)]
+pub struct Stivale2StructTagEFISystemTable {
+    pub identifier: u64,
+    pub next: u64,
+    pub system_table: u64,
+}
+
+/// This tag provides the kernel with a pointer to a copy the raw executable file of the kernel
+/// that the bootloader loaded.
+#[repr(C, packed)]
+pub struct Stivale2StructTagKernelFile {
+    pub identifier: u64,
+    pub next: u64,
+    pub kernel_file: u64,
+}
