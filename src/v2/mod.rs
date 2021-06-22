@@ -108,20 +108,21 @@ impl Stivale2Struct {
     ///
     /// Returned pointer should be checked for validity and cast into desired structure if valid.
     ///
+    /// Please take a look at other convenient functions provided like
+    /// `Stivale2Struct::get_terminal` and use them over directly using `get_tag`.
     /// # Examples
     ///
     /// ```no_run
     ///
     ///fn entry(info: stivale_rs::v2::Stivale2Struct) {
-    ///
     ///     let tag = info.get_tag(0xc2b3f4c3233b0974);
-    ///
-    ///    if tag.is_null() {
-    ///       // handle case
-    ///    } else {
+    ///     if let Some(tag) = info.get_tag(0xc2b3f4c3233b0974) {
+    ///         // use tag and cast it to desired structure.
     ///         let term = tag as *const stivale_rs::v2::Stivale2StructTagTerminal;
-    ///    }
-    ///}
+    ///     } else {
+    ///         // handle case when tag not given by bootloader.
+    ///     }
+    /// }
     /// ```
     pub fn get_tag(&self, id: u64) -> Option<*const ()> {
         let mut current = self.tags as *const ();
