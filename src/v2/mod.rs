@@ -173,7 +173,7 @@ impl Stivale2Struct {
 
     /// Get a tag using id as type T.
     ///
-    /// **Warning**: This will definitely result in a crash if pass in the wrong type. Please make
+    /// **Warning**: This will definitely result in a crash if passed the wrong type. Please make
     /// sure you use the real type that is attributed to the id.
     pub fn _get<'a, T>(&self, id: u64) -> Option<&'a T> {
         let tag = self.get_tag(id);
