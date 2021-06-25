@@ -61,7 +61,7 @@ impl Stivale2Header {
 unsafe impl Sync for Stivale2Header {}
 unsafe impl Send for Stivale2Header {}
 
-#[repr(C, packed)]
+#[repr(C)]
 pub struct Stivale2Tag {
     pub identifier: u64,
     pub next: *const (),
@@ -72,7 +72,7 @@ unsafe impl Send for Stivale2Tag {}
 
 pub const STIVALE2_HEADER_TAG_FRAMEBUFFER_ID: u64 = 0x3ecc1bc43d0f7971;
 
-#[repr(C, packed)]
+#[repr(C)]
 pub struct Stivale2HeaderTagFrameBuffer {
     pub identifier: u64,
     pub next: *const (),
