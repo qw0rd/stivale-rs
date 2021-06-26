@@ -9,7 +9,7 @@
 /// The kernel executable shall have a section .stivale2hdr which will contain the header that the
 /// bootloader will parse. The following header should be initalized as static and should be linked
 /// as section `.stivale2hdr`
-#[repr(C, packed)]
+#[repr(C)]
 pub struct Stivale2Header {
     pub entry_point: *const (),
 
@@ -86,7 +86,7 @@ unsafe impl Send for Stivale2HeaderTagFrameBuffer {}
 
 pub const STIVALE2_HEADER_TAG_TERMINAL_ID: u64 = 0xa85d499b1823be72;
 
-#[repr(C, packed)]
+#[repr(C)]
 pub struct Stivale2HeaderTagTerminal {
     pub identifier: u64,
     pub next: *const (),
@@ -96,7 +96,8 @@ pub struct Stivale2HeaderTagTerminal {
 unsafe impl Sync for Stivale2HeaderTagTerminal {}
 unsafe impl Send for Stivale2HeaderTagTerminal {}
 
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2Struct {
     pub bootloader_brand: [u8; 64],
     pub bootloader_version: [u8; 64],
@@ -190,7 +191,8 @@ impl Stivale2Struct {
 
 pub const STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID: u64 = 0x506461d2950408fa;
 
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagFramebuffer {
     pub identifier: u64,
     pub next: u64,
@@ -210,7 +212,8 @@ pub struct Stivale2StructTagFramebuffer {
 
 pub const STIVALE2_STRUCT_TAG_TERMINAL_ID: u64 = 0xc2b3f4c3233b0974;
 
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagTerminal {
     pub identifier: u64,
     pub next: u64,
@@ -236,22 +239,25 @@ impl Stivale2StructTagTerminal {
 }
 
 /// This tag reports to the kernel the command line string that was passed to it by the bootloader.
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagCmdline {
     pub identifier: u64,
     pub next: u64,
     pub cmdline: u64,
 }
 
-#[repr(C, packed)]
-pub struct Stivale2StructTagMemmap {
+#[repr(C)]
+#[derive(core::fmt::Debug)]
+pub struct Stivale2StructTagMemmap<const ENTRIES_LEN: usize> {
     pub identifier: u64,
     pub next: u64,
     pub entries: u64,
-    pub memmap: *const Stivale2MMapEntry,
+    pub memmap: [Stivale2MMapEntry; ENTRIES_LEN],
 }
 
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2MMapEntry {
     pub base: u64,
     pub length: u64,
@@ -259,6 +265,7 @@ pub struct Stivale2MMapEntry {
     pub unsed: u32,
 }
 
+#[repr(u32)]
 pub enum Stivale2MMapType {
     Usable = 1,
     Reserved,
@@ -271,7 +278,8 @@ pub enum Stivale2MMapType {
 }
 
 /// This tag reports to the kernel the current UNIX epoch, as per RTC.
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagEpoch {
     pub identifier: u64,
     pub next: u64,
@@ -279,7 +287,8 @@ pub struct Stivale2StructTagEpoch {
 }
 
 /// This tag reports to the kernel info about the firmware.
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagFirmware {
     pub identifier: u64,
     pub next: u64,
@@ -287,7 +296,8 @@ pub struct Stivale2StructTagFirmware {
 }
 
 /// This tag provides the kernel with a pointer to the EFI system table if available.
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagEFISystemTable {
     pub identifier: u64,
     pub next: u64,
@@ -296,7 +306,8 @@ pub struct Stivale2StructTagEFISystemTable {
 
 /// This tag provides the kernel with a pointer to a copy the raw executable file of the kernel
 /// that the bootloader loaded.
-#[repr(C, packed)]
+#[repr(C)]
+#[derive(core::fmt::Debug)]
 pub struct Stivale2StructTagKernelFile {
     pub identifier: u64,
     pub next: u64,
